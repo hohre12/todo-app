@@ -1,10 +1,27 @@
 import './App.css'
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 function App() {
 
   return (
     <div>
-      이곳에 To-Do App을 작성해주세요.
+        <Routes>
+            <Route path="/todo">
+                <Route
+                    index
+                    element={<></>}
+                />
+            </Route>
+            <Route
+            path="*"
+            element={
+                <Navigate
+                replace
+                to="/todo"
+                />
+            }
+            />
+        </Routes>
     </div>
   )
 }

@@ -4,6 +4,8 @@ import App from './App.tsx'
 import './index.css'
 
 import { worker } from './mocks/browser.ts'
+import { RecoilRoot } from 'recoil'
+import { BrowserRouter as Router } from 'react-router-dom';
 
 worker.start()
 
@@ -20,7 +22,11 @@ worker
   .then(() => {
     return root.render(
       <React.StrictMode>
-        <App />
+        <RecoilRoot>
+            <Router>
+                <App />
+            </Router>
+        </RecoilRoot>
       </React.StrictMode>
     )
   })
