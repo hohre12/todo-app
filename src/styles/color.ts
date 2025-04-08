@@ -1,6 +1,6 @@
 export const color = {
   [`primary`]: '#4880EE',
-  [`red`]: '#E84118',
+  [`red`]: '#FF4052',
   [`gray`]: '#DADADA',
   [`lightGray`]: '#F2F4F6',
   [`white`]: '#FFFFFF',
