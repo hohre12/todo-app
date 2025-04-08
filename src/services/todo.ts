@@ -17,7 +17,6 @@ const getTodos = async ({
   limit?: number
   keyword?: string
 }): Promise<{ todos: ToDo[]; nextPage?: number }> => {
-  console.log('여긴안오냐?')
   const res = await axiosInstance.get<APIResponse<ToDo[]>>('/todos')
   if (res.data.code !== 200) throw new Error(res.data.message)
   let allTodos: ToDo[] = res.data.data ?? []
