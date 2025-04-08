@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components'
 
 export const LoadingWrapper = styled.div`
   display: flex;
@@ -16,4 +16,9 @@ export const LoadingWrapper = styled.div`
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
   }
-`;
+`
+
+export const Required = styled.p`
+  display: inline-block;
+  color: #ff3b31;
+`

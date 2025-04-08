@@ -5,8 +5,10 @@ import { fonts } from '@/styles/typography'
 import { useCallback, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import styled from 'styled-components'
+import RegistModal from './components/registModal/RegistModal'
 
 const TodoList = () => {
+  const [isOpenRegistModal, setIsOpenRegistModal] = useState<boolean>(false)
   const [searchText, setSearchText] = useRecoilState(todoSearchTextState)
   const [text, setText] = useState<string>(searchText)
   const handleSearchTextDelete = useCallback(() => {
@@ -20,22 +22,33 @@ const TodoList = () => {
     [setSearchText]
   )
   return (
-    <TodoListWrapper>
-      <Header>
-        <h2>할일목록</h2>
-        <ControlWrapper>
-          <SearchBox
-            value={text}
-            placeholder="검색"
-            onTextChange={(text) => setText(text)}
-            onRemoveClick={handleSearchTextDelete}
-            onKeyDown={handleSearch}
-            onRecentClick={handleSearch}
-          ></SearchBox>
-          <Button variant="black">할일 생성</Button>
-        </ControlWrapper>
-      </Header>
-    </TodoListWrapper>
+    <>
+      <TodoListWrapper>
+        <Header>
+          <h2>할일목록</h2>
+          <ControlWrapper>
+            <SearchBox
+              value={text}
+              placeholder="검색"
+              onTextChange={(text) => setText(text)}
+              onRemoveClick={handleSearchTextDelete}
+              onKeyDown={handleSearch}
+              onRecentClick={handleSearch}
+            ></SearchBox>
+            <Button
+              variant="primary"
+              width={200}
+              onClick={() => setIsOpenRegistModal(!isOpenRegistModal)}
+            >
+              TODO 생성
+            </Button>
+          </ControlWrapper>
+        </Header>
+      </TodoListWrapper>
+      {isOpenRegistModal && (
+        <RegistModal onClose={() => setIsOpenRegistModal(false)}></RegistModal>
+      )}
+    </>
   )
 }
 
@@ -61,6 +74,7 @@ const Header = styled.div`
 `
 const ControlWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-items: center;
+  gap: 20px;
 `

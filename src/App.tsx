@@ -5,6 +5,7 @@ import SideNavigationBar from './components/sideNavigationBar/SideNavigationBar'
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 import TodoList from './pages/Todo/List'
+import Toast from './components/toast/Toast'
 
 interface PrivateRouteProps {
   children: ReactNode
@@ -33,6 +34,7 @@ function App() {
         </Route>
         <Route path="*" element={<Navigate replace to="/todo" />} />
       </Routes>
+      <Toast></Toast>
     </div>
   )
 }
