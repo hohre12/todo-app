@@ -77,12 +77,12 @@ const TableRow = ({ data }: TTableRowProps) => {
         {!data.done && (
           <>
             <Button variant="primary" onClick={handleTodoDone}>
-              완료
+              Complete
             </Button>
-            <Button>수정</Button>
+            <Button>Edit</Button>
           </>
         )}
-        <Button variant="red">삭제</Button>
+        <Button variant="red">Delete</Button>
       </ButtonWrapper>
     </TableRowWrapper>
   )
