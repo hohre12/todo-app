@@ -1,15 +1,14 @@
-import React, { HTMLAttributes, useEffect, useState } from 'react'
+import { HTMLAttributes, useEffect, useState } from 'react'
 
 import IconEnabled from '@/assets/svg/icon-checkbox-enabled.svg'
 import IconHover from '@/assets/svg/icon-checkbox-hover.svg'
 import IconChecked from '@/assets/svg/icon-checkbox-checked-black.svg'
 import IconCheckedDisabled from '@/assets/svg/icon-checkbox-checked-disabled.svg'
 import iconDisabled from '@/assets/svg/icon-checkbox-disabled.svg'
-import IconSomeChecked from '@/assets/svg/icon-checkbox-mutiple-black.svg'
 import styled from 'styled-components'
 import { fonts } from '@/styles/typography'
 
-export type TCheckBoxValue = 'checked' | 'unchecked' | 'some' | boolean
+export type TCheckBoxValue = 'checked' | 'unchecked' | boolean
 
 interface ICheckboxProps extends HTMLAttributes<HTMLDivElement> {
   value?: TCheckBoxValue | undefined
@@ -40,8 +39,6 @@ const Checkbox = ({
       } else if (checked == 'checked' || checked == true) {
         if (disabled) return IconCheckedDisabled
         else return IconChecked
-      } else if (checked == 'some') {
-        return IconSomeChecked
       }
       return IconEnabled
     }

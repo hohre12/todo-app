@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import ReactDatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import { useState } from 'react'
-import { createTodo } from '@/services/todo'
+import { useCreateTodo } from '@/services/todo'
 import { useToast } from '@/hooks/useeToast'
 
 type TRegistModalProps = {
@@ -17,6 +17,7 @@ const RegistModal = ({ onClose }: TRegistModalProps) => {
   const [text, setText] = useState<string>()
   const [deadline, setDeadline] = useState<Date | null>(null)
   const { addToast } = useToast()
+  const { mutateAsync: createTodo } = useCreateTodo()
 
   const handleTodoRegist = async () => {
     if (!text) return
@@ -115,6 +116,9 @@ const RegistModalHeader = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 30px;
+  svg {
+    cursor: pointer;
+  }
 `
 
 const RegistModalBody = styled.div`
@@ -135,9 +139,9 @@ const RegistModalFooter = styled.div`
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
   & > span {
     white-space: nowrap;
+    margin-bottom: 10px;
   }
   .react-datepicker-wrapper {
     .react-datepicker__input-container {
