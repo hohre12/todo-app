@@ -2,21 +2,29 @@ import Button from '@/components/button/Button'
 import SearchBox from '@/components/searchBox/SearchBox'
 import { selectedTodosState, todoSearchTextState } from '@/state/todo'
 import { fonts } from '@/styles/typography'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import styled from 'styled-components'
 import RegistModal from './components/registModal/RegistModal'
 import { useTodos } from '@/services/todo'
 import TableRow from '@/components/tableRow/TableRow'
 import Checkbox from '@/components/checkBox/CheckBox'
+import { debounce } from 'lodash'
 
 const TodoList = () => {
   const [selectedTodos, setSelectedTodos] = useRecoilState(selectedTodosState)
   const [isOpenRegistModal, setIsOpenRegistModal] = useState<boolean>(false)
   const [searchText, setSearchText] = useRecoilState(todoSearchTextState)
   const [text, setText] = useState<string>(searchText)
+  const listWrapperRef = useRef<HTMLDivElement | null>(null)
 
-  const { data: todos } = useTodos()
+  const { data, isLoading, error, fetchNextPage } = useTodos({
+    keyword: searchText,
+  })
+
+  const todos = useMemo(() => {
+    return data?.pages.flatMap((page) => page.todos) ?? []
+  }, [data?.pages])
 
   const isAllChecked = useMemo(() => {
     if (!todos) return false
@@ -43,6 +51,42 @@ const TodoList = () => {
     },
     [setSearchText]
   )
+
+  const handleScroll = debounce(() => {
+    if (listWrapperRef.current) {
+      const { scrollTop, clientHeight, scrollHeight } = listWrapperRef.current
+
+      if (scrollTop + clientHeight >= scrollHeight) {
+        fetchNextPage()
+      }
+    }
+  }, 300)
+
+  useEffect(() => {
+    const wrapper = listWrapperRef.current
+    if (wrapper) {
+      wrapper.addEventListener('scroll', handleScroll)
+    }
+    return () => {
+      if (wrapper) {
+        wrapper.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [todos, handleScroll])
+
+  if (isLoading)
+    return (
+      <div>
+        <div className="loading"></div>
+      </div>
+    )
+  if (error)
+    return (
+      <div>
+        <span className="error">{error.message}</span>
+      </div>
+    )
+
   return (
     <>
       <TodoListWrapper>
@@ -75,7 +119,7 @@ const TodoList = () => {
                 ></Checkbox>
                 <h4>전체선택</h4>
               </ListInfo>
-              <TableWrapper>
+              <TableWrapper ref={listWrapperRef}>
                 {todos.map((todo, idx) => (
                   <TableRow key={idx} data={todo}></TableRow>
                 ))}

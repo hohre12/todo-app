@@ -1,19 +1,49 @@
 import { APIResponse } from './../types/api'
 import { ToDo, ToDoRequest } from '@/types/api'
 import axiosInstance from './api'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query'
 
 // get
-const getTodos = async (): Promise<ToDo[]> => {
+const getTodos = async ({
+  pageParam = 1,
+  limit = 10,
+  keyword = '',
+}: {
+  pageParam?: number
+  limit?: number
+  keyword?: string
+}): Promise<{ todos: ToDo[]; nextPage?: number }> => {
+  console.log('여긴안오냐?')
   const res = await axiosInstance.get<APIResponse<ToDo[]>>('/todos')
   if (res.data.code !== 200) throw new Error(res.data.message)
-  return res.data.data!
+  let allTodos: ToDo[] = res.data.data ?? []
+  if (keyword) {
+    allTodos = allTodos.filter((todo) =>
+      todo.text.toLowerCase().includes(keyword.toLowerCase())
+    )
+  }
+  const offset = (pageParam - 1) * limit
+  const paged = allTodos.slice(offset, offset + limit)
+  const hasNext = offset + limit < allTodos.length
+  return { todos: paged, nextPage: hasNext ? pageParam + 1 : undefined }
 }
 
-export const useTodos = () => {
-  return useQuery({
-    queryKey: ['todos'],
-    queryFn: getTodos,
+export const useTodos = ({
+  limit = 10,
+  keyword = '',
+}: {
+  limit?: number
+  keyword?: string
+}) => {
+  return useInfiniteQuery({
+    queryKey: ['todos', keyword],
+    queryFn: ({ pageParam = 1 }) => getTodos({ pageParam, limit, keyword }),
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    initialPageParam: 1,
   })
 }
 
