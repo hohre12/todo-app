@@ -6,11 +6,16 @@ import { useCallback, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import styled from 'styled-components'
 import RegistModal from './components/registModal/RegistModal'
+import { useTodos } from '@/services/todo'
+import TableRow from '@/components/tableRow/TableRow'
 
 const TodoList = () => {
   const [isOpenRegistModal, setIsOpenRegistModal] = useState<boolean>(false)
   const [searchText, setSearchText] = useRecoilState(todoSearchTextState)
   const [text, setText] = useState<string>(searchText)
+
+  const { data: todos } = useTodos()
+
   const handleSearchTextDelete = useCallback(() => {
     setSearchText('')
   }, [setSearchText])
@@ -44,6 +49,17 @@ const TodoList = () => {
             </Button>
           </ControlWrapper>
         </Header>
+        <ListContent>
+          {todos && todos.length > 0 ? (
+            <TableWrapper>
+              {todos.map((todo, idx) => (
+                <TableRow key={idx} data={todo}></TableRow>
+              ))}
+            </TableWrapper>
+          ) : (
+            <div></div>
+          )}
+        </ListContent>
       </TodoListWrapper>
       {isOpenRegistModal && (
         <RegistModal onClose={() => setIsOpenRegistModal(false)}></RegistModal>
@@ -74,7 +90,14 @@ const Header = styled.div`
 `
 const ControlWrapper = styled.div`
   display: flex;
-  /* justify-content: space-between; */
   align-items: center;
   gap: 20px;
+`
+
+const ListContent = styled.div``
+const TableWrapper = styled.div`
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `
