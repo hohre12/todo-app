@@ -11,6 +11,8 @@ import TableRow from '@/components/tableRow/TableRow'
 import Checkbox from '@/components/checkBox/CheckBox'
 import { debounce } from 'lodash'
 import FloatingMenu from './components/floatingMenu/FloatingMenu'
+import { ToDo } from '@/types/api'
+import EditModal from './components/editModal/EditModal'
 
 const TodoList = () => {
   const [selectedTodos, setSelectedTodos] = useRecoilState(selectedTodosState)
@@ -19,6 +21,7 @@ const TodoList = () => {
   const [searchText, setSearchText] = useRecoilState(todoSearchTextState)
   const [text, setText] = useState<string>(searchText)
   const listWrapperRef = useRef<HTMLDivElement | null>(null)
+  const [editTarget, setEditTarget] = useState<ToDo>()
 
   const { data, isLoading, error, fetchNextPage } = useTodos({
     keyword: searchText,
@@ -125,7 +128,11 @@ const TodoList = () => {
               </ListInfo>
               <TableWrapper ref={listWrapperRef}>
                 {todos.map((todo, idx) => (
-                  <TableRow key={idx} data={todo}></TableRow>
+                  <TableRow
+                    key={idx}
+                    data={todo}
+                    onEditClick={(todo) => setEditTarget(todo)}
+                  ></TableRow>
                 ))}
               </TableWrapper>
               {selectedTodos.length > 0 && <FloatingMenu></FloatingMenu>}
@@ -137,6 +144,12 @@ const TodoList = () => {
       </TodoListWrapper>
       {isOpenRegistModal && (
         <RegistModal onClose={() => setIsOpenRegistModal(false)}></RegistModal>
+      )}
+      {editTarget && (
+        <EditModal
+          onClose={() => setEditTarget(undefined)}
+          propsTodo={editTarget}
+        ></EditModal>
       )}
     </>
   )

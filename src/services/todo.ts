@@ -4,6 +4,7 @@ import axiosInstance from './api'
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
 
@@ -46,6 +47,21 @@ export const useTodos = ({
   })
 }
 
+// get todo
+const getTodo = async (id: ToDo['id']): Promise<ToDo> => {
+  const res = await axiosInstance.get<APIResponse<ToDo>>(`/todos/${id}`)
+  if (res.data.code !== 200) throw new Error(res.data.message)
+  return res.data.data!
+}
+
+export const useTodo = (id: ToDo['id']) => {
+  return useQuery({
+    queryKey: ['todo'],
+    queryFn: () => getTodo(id),
+    enabled: !!id,
+  })
+}
+
 // create todo
 const createTodo = async (todo: ToDoRequest): Promise<ToDo> => {
   const res = await axiosInstance.post<APIResponse<ToDo>>('/todos', todo)
@@ -62,7 +78,7 @@ export const useCreateTodo = () => {
 }
 
 // update todo
-const updateTodo = async (id: number, todo: ToDoRequest): Promise<ToDo> => {
+const updateTodo = async (id: ToDo['id'], todo: ToDoRequest): Promise<ToDo> => {
   const res = await axiosInstance.put<APIResponse<ToDo>>(`/todos/${id}`, todo)
   if (res.data.code !== 200) throw new Error(res.data.message)
   return res.data.data!
@@ -71,14 +87,14 @@ const updateTodo = async (id: number, todo: ToDoRequest): Promise<ToDo> => {
 export const useUpdateTodo = () => {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: ToDoRequest }) =>
+    mutationFn: ({ id, data }: { id: ToDo['id']; data: ToDoRequest }) =>
       updateTodo(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['todos'] }),
   })
 }
 
 // delete todo
-const deleteTodo = async (id: number) => {
+const deleteTodo = async (id: ToDo['id']) => {
   const res = await axiosInstance.delete<APIResponse<void>>(`/todos/${id}`)
   if (res.data.code !== 200) throw new Error(res.data.message)
 }
@@ -86,7 +102,7 @@ const deleteTodo = async (id: number) => {
 export const useDeleteTodo = () => {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (id: number) => deleteTodo(id),
+    mutationFn: (id: ToDo['id']) => deleteTodo(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['todos'] }),
   })
 }

@@ -14,9 +14,10 @@ import { useConfirm } from '@/hooks/useConfirm'
 
 type TTableRowProps = {
   data: ToDo
+  onEditClick: (todo: ToDo) => void
 }
 
-const TableRow = ({ data }: TTableRowProps) => {
+const TableRow = ({ data, onEditClick }: TTableRowProps) => {
   const [selectedTodos, setSelectedTodos] = useRecoilState(selectedTodosState)
   const resetTodos = useResetRecoilState(selectedTodosState)
   const { addToast } = useToast()
@@ -99,7 +100,7 @@ const TableRow = ({ data }: TTableRowProps) => {
             <Button variant="primary" onClick={handleTodoDone}>
               완료
             </Button>
-            <Button>수정</Button>
+            <Button onClick={() => onEditClick(data)}>수정</Button>
           </>
         )}
         <Button
