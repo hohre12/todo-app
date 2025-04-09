@@ -6,6 +6,7 @@ import { ReactNode } from 'react'
 import styled from 'styled-components'
 import TodoList from './pages/Todo/List'
 import Toast from './components/toast/Toast'
+import Confirm from './components/confirm/Confirm'
 
 interface PrivateRouteProps {
   children: ReactNode
@@ -34,6 +35,7 @@ function App() {
         </Route>
         <Route path="*" element={<Navigate replace to="/todo" />} />
       </Routes>
+      <Confirm></Confirm>
       <Toast></Toast>
     </div>
   )

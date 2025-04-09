@@ -3,13 +3,14 @@ import styled from 'styled-components'
 import Button from '../button/Button'
 import moment from 'moment'
 import Checkbox, { TCheckBoxValue } from '../checkBox/CheckBox'
-import { useUpdateTodo } from '@/services/todo'
-import { useRecoilState } from 'recoil'
+import { useDeleteTodo, useUpdateTodo } from '@/services/todo'
+import { useRecoilState, useResetRecoilState } from 'recoil'
 import { selectedTodosState } from '@/state/todo'
 import { useCallback } from 'react'
 import { color, text } from '@/styles/color'
 import { fonts } from '@/styles/typography'
 import { useToast } from '@/hooks/useeToast'
+import { useConfirm } from '@/hooks/useConfirm'
 
 type TTableRowProps = {
   data: ToDo
@@ -17,14 +18,17 @@ type TTableRowProps = {
 
 const TableRow = ({ data }: TTableRowProps) => {
   const [selectedTodos, setSelectedTodos] = useRecoilState(selectedTodosState)
+  const resetTodos = useResetRecoilState(selectedTodosState)
   const { addToast } = useToast()
+  const { showConfirm, hideConfirm } = useConfirm()
   const { mutateAsync: updateTodo } = useUpdateTodo()
+  const { mutateAsync: deleteTodo } = useDeleteTodo()
 
   const getIsDeadline = (deadline: number): boolean => {
-    const now = moment()
-    const dueDate = moment(deadline)
+    const now = moment().startOf('day')
+    const dueDate = moment(deadline).startOf('day')
     const diffDate = dueDate.diff(now, 'days')
-    return diffDate >= 0 && diffDate <= 3
+    return diffDate >= 0 && diffDate <= 2
   }
 
   const handleChecked = useCallback(
@@ -58,6 +62,22 @@ const TableRow = ({ data }: TTableRowProps) => {
       console.warn(e)
     }
   }
+
+  const handleTodoDelete = async () => {
+    try {
+      await deleteTodo(data.id)
+      hideConfirm()
+      addToast({
+        id: Date.now(),
+        content: `할일 - ${data.text}(이) 삭제되었습니다.`,
+        type: 'success',
+      })
+      resetTodos()
+    } catch (e) {
+      console.warn(e)
+    }
+  }
+
   return (
     <TableRowWrapper
       $isDone={data.done}
@@ -77,12 +97,29 @@ const TableRow = ({ data }: TTableRowProps) => {
         {!data.done && (
           <>
             <Button variant="primary" onClick={handleTodoDone}>
-              Complete
+              완료
             </Button>
-            <Button>Edit</Button>
+            <Button>수정</Button>
           </>
         )}
-        <Button variant="red">Delete</Button>
+        <Button
+          variant="red"
+          onClick={() =>
+            showConfirm({
+              isOpen: true,
+              title: '할일 삭제',
+              content: `할일 - ${data.text}(를) 삭제하시겠습니까?`,
+              onCancel: hideConfirm,
+              cancelText: '취소',
+              onConfirm: handleTodoDelete,
+              confirmText: '삭제',
+              onClose: hideConfirm,
+              confirmVariant: 'red',
+            })
+          }
+        >
+          삭제
+        </Button>
       </ButtonWrapper>
     </TableRowWrapper>
   )

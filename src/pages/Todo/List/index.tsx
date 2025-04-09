@@ -3,16 +3,18 @@ import SearchBox from '@/components/searchBox/SearchBox'
 import { selectedTodosState, todoSearchTextState } from '@/state/todo'
 import { fonts } from '@/styles/typography'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useResetRecoilState } from 'recoil'
 import styled from 'styled-components'
 import RegistModal from './components/registModal/RegistModal'
 import { useTodos } from '@/services/todo'
 import TableRow from '@/components/tableRow/TableRow'
 import Checkbox from '@/components/checkBox/CheckBox'
 import { debounce } from 'lodash'
+import FloatingMenu from './components/floatingMenu/FloatingMenu'
 
 const TodoList = () => {
   const [selectedTodos, setSelectedTodos] = useRecoilState(selectedTodosState)
+  const resetTodos = useResetRecoilState(selectedTodosState)
   const [isOpenRegistModal, setIsOpenRegistModal] = useState<boolean>(false)
   const [searchText, setSearchText] = useRecoilState(todoSearchTextState)
   const [text, setText] = useState<string>(searchText)
@@ -43,13 +45,15 @@ const TodoList = () => {
 
   const handleSearchTextDelete = useCallback(() => {
     setSearchText('')
-  }, [setSearchText])
+    resetTodos()
+  }, [setSearchText, resetTodos])
 
   const handleSearch = useCallback(
     (value: string) => {
       setSearchText(value)
+      resetTodos()
     },
-    [setSearchText]
+    [setSearchText, resetTodos]
   )
 
   const handleScroll = debounce(() => {
@@ -124,6 +128,7 @@ const TodoList = () => {
                   <TableRow key={idx} data={todo}></TableRow>
                 ))}
               </TableWrapper>
+              {selectedTodos.length > 0 && <FloatingMenu></FloatingMenu>}
             </>
           ) : (
             <div></div>

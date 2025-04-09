@@ -1,17 +1,17 @@
-import { color, text } from '@/styles/color';
-import { fonts } from '@/styles/typography';
-import { TVariant } from '@/types/common';
-import { HTMLAttributes, MouseEvent } from 'react';
-import styled from 'styled-components';
+import { color, text } from '@/styles/color'
+import { fonts } from '@/styles/typography'
+import { TVariant } from '@/types/common'
+import { HTMLAttributes, MouseEvent } from 'react'
+import styled from 'styled-components'
 
 interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
-  className?: string;
-  disabled?: boolean;
-  variant?: TVariant;
-  width?: number;
-  height?: number;
-  size?: 'small' | 'medium';
-  onClick?: (e?: MouseEvent<HTMLButtonElement>) => void;
+  className?: string
+  disabled?: boolean
+  variant?: TVariant
+  width?: number
+  height?: number
+  size?: 'small' | 'medium'
+  onClick?: (e?: MouseEvent<HTMLButtonElement>) => void
 }
 
 const Button = ({
@@ -25,8 +25,8 @@ const Button = ({
   ...props
 }: IButtonProps) => {
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-    if (onClick) onClick(e);
-  };
+    if (onClick) onClick(e)
+  }
   return (
     <ButtonRootWrapper
       $width={width}
@@ -38,10 +38,10 @@ const Button = ({
     >
       {props.children}
     </ButtonRootWrapper>
-  );
-};
+  )
+}
 
-export default Button;
+export default Button
 
 const ButtonRootWrapper = styled.button<{ $width?: number; $height?: number }>`
   display: inline-flex;
@@ -109,4 +109,13 @@ const ButtonRootWrapper = styled.button<{ $width?: number; $height?: number }>`
       background: #383838;
     }
   }
-`;
+  &.transparent {
+    background-color: transparent;
+    border: none;
+    &:hover,
+    &:active {
+      background-color: ${color['lightGray']};
+      opacity: 0.7;
+    }
+  }
+`

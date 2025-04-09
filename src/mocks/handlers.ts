@@ -79,4 +79,18 @@ export const handlers = [
       return HttpResponse.json(apiWrapper<void>(undefined))
     }
   }),
+  http.delete<PathParams, { ids: ToDo['id'][] }>(
+    '/api/todos',
+    async ({ request }) => {
+      const { ids } = await request.json()
+      let todos: ToDo[] = fetchToDos()
+      const todosLength = todos.length
+      todos = todos.filter((todo) => !ids.includes(todo.id))
+      if (todos.length === todosLength) {
+        return HttpResponse.json(apiWrapper<void>(undefined, 404, 'Not Found'))
+      }
+      setToDos(todos)
+      return HttpResponse.json(apiWrapper<void>(undefined))
+    }
+  ),
 ]

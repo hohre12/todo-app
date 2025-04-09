@@ -7,6 +7,7 @@ export type TVariant =
   | 'lightGray'
   | 'white'
   | 'black'
+  | 'transparent'
 
 export interface Toast {
   id: number

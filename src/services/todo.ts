@@ -7,7 +7,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 
-// get
+// get todos
 const getTodos = async ({
   pageParam = 1,
   limit = 10,
@@ -46,7 +46,7 @@ export const useTodos = ({
   })
 }
 
-// post
+// create todo
 const createTodo = async (todo: ToDoRequest): Promise<ToDo> => {
   const res = await axiosInstance.post<APIResponse<ToDo>>('/todos', todo)
   if (res.data.code !== 200) throw new Error(res.data.message)
@@ -61,7 +61,7 @@ export const useCreateTodo = () => {
   })
 }
 
-// put
+// update todo
 const updateTodo = async (id: number, todo: ToDoRequest): Promise<ToDo> => {
   const res = await axiosInstance.put<APIResponse<ToDo>>(`/todos/${id}`, todo)
   if (res.data.code !== 200) throw new Error(res.data.message)
@@ -73,6 +73,36 @@ export const useUpdateTodo = () => {
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: ToDoRequest }) =>
       updateTodo(id, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['todos'] }),
+  })
+}
+
+// delete todo
+const deleteTodo = async (id: number) => {
+  const res = await axiosInstance.delete<APIResponse<void>>(`/todos/${id}`)
+  if (res.data.code !== 200) throw new Error(res.data.message)
+}
+
+export const useDeleteTodo = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (id: number) => deleteTodo(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['todos'] }),
+  })
+}
+
+// delete todos
+const deleteTodos = async (ids: ToDo['id'][]) => {
+  const res = await axiosInstance.delete<APIResponse<void>>(`/todos`, {
+    data: { ids },
+  })
+  if (res.data.code !== 200) throw new Error(res.data.message)
+}
+
+export const useDeleteTodos = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (ids: ToDo['id'][]) => deleteTodos(ids),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['todos'] }),
   })
 }
