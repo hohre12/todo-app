@@ -5,9 +5,12 @@ import './index.css'
 
 import { worker } from './mocks/browser.ts'
 import { RecoilRoot } from 'recoil'
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 worker.start()
+
+const queryClient = new QueryClient()
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 
@@ -22,11 +25,13 @@ worker
   .then(() => {
     return root.render(
       <React.StrictMode>
-        <RecoilRoot>
+        <QueryClientProvider client={queryClient}>
+          <RecoilRoot>
             <Router>
-                <App />
+              <App />
             </Router>
-        </RecoilRoot>
+          </RecoilRoot>
+        </QueryClientProvider>
       </React.StrictMode>
     )
   })
