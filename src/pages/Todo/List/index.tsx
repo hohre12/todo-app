@@ -13,6 +13,7 @@ import { debounce } from 'lodash'
 import FloatingMenu from './components/floatingMenu/FloatingMenu'
 import { ToDo } from '@/types/api'
 import EditModal from './components/editModal/EditModal'
+import { ErrorWrapper, LoadingWrapper, NoListWrapper } from '@/styles/common'
 
 const TodoList = () => {
   const [selectedTodos, setSelectedTodos] = useRecoilState(selectedTodosState)
@@ -83,15 +84,15 @@ const TodoList = () => {
 
   if (isLoading)
     return (
-      <div>
+      <LoadingWrapper>
         <div className="loading"></div>
-      </div>
+      </LoadingWrapper>
     )
   if (error)
     return (
-      <div>
+      <ErrorWrapper>
         <span className="error">{error.message}</span>
-      </div>
+      </ErrorWrapper>
     )
 
   return (
@@ -138,7 +139,11 @@ const TodoList = () => {
               {selectedTodos.length > 0 && <FloatingMenu></FloatingMenu>}
             </>
           ) : (
-            <div></div>
+            <NoListWrapper>
+              <span>
+                {searchText ? '검색결과 없음' : '등록된 TODO가 없습니다'}
+              </span>
+            </NoListWrapper>
           )}
         </ListContent>
       </TodoListWrapper>
