@@ -109,7 +109,7 @@ const TableRow = ({ data, onEditClick }: TTableRowProps) => {
             showConfirm({
               isOpen: true,
               title: '할일 삭제',
-              content: `할일 - ${data.text}(를) 삭제하시겠습니까?`,
+              content: `할일 - ${data.text}(을) 삭제하시겠습니까?`,
               onCancel: hideConfirm,
               cancelText: '취소',
               onConfirm: handleTodoDelete,
@@ -139,7 +139,7 @@ const TableRowWrapper = styled.div<{ $isDone: boolean; $isDeadline: boolean }>`
     $isDone
       ? text['textSecondary']
       : $isDeadline
-      ? text['textyello']
+      ? text['textYello']
       : text['textBlack']};
   background: ${({ $isDone, $isDeadline }) =>
     $isDone

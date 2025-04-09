@@ -8,6 +8,8 @@ import 'react-datepicker/dist/react-datepicker.css'
 import { useState } from 'react'
 import { useCreateTodo } from '@/services/todo'
 import { useToast } from '@/hooks/useeToast'
+import ErrorText from '@/components/errorText/ErrorText'
+import { color } from '@/styles/color'
 
 type TRegistModalProps = {
   onClose: () => void
@@ -17,9 +19,11 @@ const RegistModal = ({ onClose }: TRegistModalProps) => {
   const [text, setText] = useState<string>()
   const [deadline, setDeadline] = useState<Date | null>(null)
   const { addToast } = useToast()
+  const [isSubmit, setSubmit] = useState<boolean>(false)
   const { mutateAsync: createTodo } = useCreateTodo()
 
   const handleTodoRegist = async () => {
+    setSubmit(true)
     if (!text) return
     if (!deadline) return
     try {
@@ -34,6 +38,7 @@ const RegistModal = ({ onClose }: TRegistModalProps) => {
         type: 'success',
       })
       onClose()
+      setSubmit(false)
     } catch (e) {
       console.warn(e)
     }
@@ -51,23 +56,33 @@ const RegistModal = ({ onClose }: TRegistModalProps) => {
             <span>
               할일<Required>*</Required>
             </span>
-            <InputWrapper>
+            <InputWrapper $isError={isSubmit && !text}>
               <Input
                 value={text}
                 onTextChange={(value) => setText(value)}
                 placeholder="할일을 입력해주세요"
               />
             </InputWrapper>
+            {isSubmit && !text && (
+              <ErrorText errorMessage="할일은 필수입니다" />
+            )}
           </Content>
           <Content>
-            <span>기한</span>
-            <ReactDatePicker
-              selected={deadline}
-              onChange={(date) => setDeadline(date)}
-              minDate={new Date()}
-              placeholderText="기한을 선택하세요"
-              dateFormat="yyyy-MM-dd"
-            ></ReactDatePicker>
+            <span>
+              기한<Required>*</Required>
+            </span>
+            <InputWrapper $isError={isSubmit && !deadline}>
+              <ReactDatePicker
+                selected={deadline}
+                onChange={(date) => setDeadline(date)}
+                minDate={new Date()}
+                placeholderText="기한을 선택하세요"
+                dateFormat="yyyy-MM-dd"
+              ></ReactDatePicker>
+            </InputWrapper>
+            {isSubmit && !deadline && (
+              <ErrorText errorMessage="기한은 필수입니다" />
+            )}
           </Content>
         </RegistModalBody>
         <RegistModalFooter>
@@ -143,11 +158,16 @@ const Content = styled.div`
     white-space: nowrap;
     margin-bottom: 10px;
   }
+`
+const InputWrapper = styled.div<{ $isError: boolean }>`
+  border: 1px solid
+    ${({ $isError }) => ($isError ? color['red'] : color['gray'])};
+  border-radius: 8px;
+  width: 100%;
+  padding: 10px;
   .react-datepicker-wrapper {
+    width: 100%;
     .react-datepicker__input-container {
-      border: 1px solid #eee;
-      padding: 10px;
-      border-radius: 8px;
       input {
         border: none;
         width: 100%;
@@ -157,10 +177,4 @@ const Content = styled.div`
       }
     }
   }
-`
-const InputWrapper = styled.div`
-  border: 1px solid #eee;
-  border-radius: 8px;
-  width: 100%;
-  padding: 10px;
 `

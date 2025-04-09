@@ -14,5 +14,6 @@ export const text = {
   [`textSubtitle`]: '#8D94A0',
   [`textWhite`]: '#FFFFFF',
   [`textBlack`]: '#111111',
-  [`textyello`]: '#856404',
+  [`textYello`]: '#856404',
+  [`textRed`]: '#ff3126',
 }
