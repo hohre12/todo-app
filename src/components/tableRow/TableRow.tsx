@@ -91,7 +91,9 @@ const TableRow = ({ data, onEditClick }: TTableRowProps) => {
       <TodoInfoWrapper>
         <TextWrapper $isDone={data.done}>{data.text}</TextWrapper>
         <DeadlineWrapper $isDone={data.done}>
-          {moment(data.deadline).format('yyyy-MM-DD')}
+          {data.deadline === 0
+            ? '기한 없음'
+            : moment(data.deadline).format('yyyy-MM-DD')}
         </DeadlineWrapper>
       </TodoInfoWrapper>
       <ButtonWrapper>

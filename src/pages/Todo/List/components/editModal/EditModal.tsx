@@ -27,14 +27,13 @@ const EditModal = ({ propsTodo, onClose }: TEditModalProps) => {
     setSubmit(true)
     if (!todo) return
     if (!text) return
-    if (!deadline) return
     try {
       await updateTodo({
         id: propsTodo.id,
         data: {
           text,
           done: todo.done,
-          deadline: deadline.getTime(),
+          deadline: deadline ? deadline.getTime() : 0,
         },
       })
       addToast({
@@ -51,7 +50,7 @@ const EditModal = ({ propsTodo, onClose }: TEditModalProps) => {
   useEffect(() => {
     if (todo) {
       setText(todo.text)
-      setDeadline(new Date(todo.deadline))
+      setDeadline(todo.deadline !== 0 ? new Date(todo.deadline) : null)
     }
   }, [todo])
   return (
@@ -79,7 +78,7 @@ const EditModal = ({ propsTodo, onClose }: TEditModalProps) => {
           </Content>
           <Content>
             <span>기한</span>
-            <InputWrapper $isError={isSubmit && !deadline}>
+            <InputWrapper>
               <ReactDatePicker
                 selected={deadline}
                 onChange={(date) => setDeadline(date)}
@@ -88,9 +87,6 @@ const EditModal = ({ propsTodo, onClose }: TEditModalProps) => {
                 dateFormat="yyyy-MM-dd"
               ></ReactDatePicker>
             </InputWrapper>
-            {isSubmit && !deadline && (
-              <ErrorText errorMessage="기한은 필수입니다" />
-            )}
           </Content>
         </EditModalBody>
         <EditModalFooter>
@@ -169,7 +165,7 @@ const Content = styled.div`
     margin-bottom: 10px;
   }
 `
-const InputWrapper = styled.div<{ $isError: boolean }>`
+const InputWrapper = styled.div<{ $isError?: boolean }>`
   border: 1px solid
     ${({ $isError }) => ($isError ? color['red'] : color['gray'])};
   border-radius: 8px;

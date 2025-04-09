@@ -25,12 +25,11 @@ const RegistModal = ({ onClose }: TRegistModalProps) => {
   const handleTodoRegist = async () => {
     setSubmit(true)
     if (!text) return
-    if (!deadline) return
     try {
       const res = await createTodo({
         text,
         done: false,
-        deadline: deadline.getTime(),
+        deadline: deadline ? deadline.getTime() : 0,
       })
       addToast({
         id: Date.now(),
@@ -68,10 +67,8 @@ const RegistModal = ({ onClose }: TRegistModalProps) => {
             )}
           </Content>
           <Content>
-            <span>
-              기한<Required>*</Required>
-            </span>
-            <InputWrapper $isError={isSubmit && !deadline}>
+            <span>기한</span>
+            <InputWrapper>
               <ReactDatePicker
                 selected={deadline}
                 onChange={(date) => setDeadline(date)}
@@ -80,9 +77,6 @@ const RegistModal = ({ onClose }: TRegistModalProps) => {
                 dateFormat="yyyy-MM-dd"
               ></ReactDatePicker>
             </InputWrapper>
-            {isSubmit && !deadline && (
-              <ErrorText errorMessage="기한은 필수입니다" />
-            )}
           </Content>
         </RegistModalBody>
         <RegistModalFooter>
@@ -159,7 +153,7 @@ const Content = styled.div`
     margin-bottom: 10px;
   }
 `
-const InputWrapper = styled.div<{ $isError: boolean }>`
+const InputWrapper = styled.div<{ $isError?: boolean }>`
   border: 1px solid
     ${({ $isError }) => ($isError ? color['red'] : color['gray'])};
   border-radius: 8px;
