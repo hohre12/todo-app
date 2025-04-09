@@ -20,7 +20,7 @@ const getTodos = async ({
 }): Promise<{ todos: ToDo[]; nextPage?: number }> => {
   const res = await axiosInstance.get<APIResponse<ToDo[]>>('/todos')
   if (res.data.code !== 200) throw new Error(res.data.message)
-  let allTodos: ToDo[] = res.data.data ?? []
+  let allTodos: ToDo[] = res.data.data?.reverse() ?? []
   if (keyword) {
     allTodos = allTodos.filter((todo) =>
       todo.text.toLowerCase().includes(keyword.toLowerCase())
