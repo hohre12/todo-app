@@ -11,7 +11,7 @@ React 기반으로 제작되었으며, 직관적인 UI와 간편한 사용성을
 ├─public
 └─src
     ├─assets
-    │  └─svg                                   # svg파일 폴더
+    │  └─svg                                    # svg파일 폴더
     ├─components                                # 재사용 가능한 컴포넌트
     │  ├─button                                 # (공통) 버튼 컴포넌트
     │  ├─checkBox                               # (공통) 체크박스 컴포넌트
